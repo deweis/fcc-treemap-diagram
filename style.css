@@ -24,6 +24,10 @@ h3 {
   background: #e0f2f1; /* teal lighten-5 */
 }
 
+.inner-text {
+  font-size: 0.5em;
+}
+
 @media (min-width: 888px) {
   .container {
     width: 800px;

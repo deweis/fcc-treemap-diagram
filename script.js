@@ -1,3 +1,19 @@
+/**
+ * TBD:
+ * - Text line breaks
+ * - Remove Parent category from diagram (check on paddingOuter etc.)
+ * - check on user stories
+ *
+ *
+ * Examples:
+ * - https://d3indepth.com/layouts/
+ * - https://beta.observablehq.com/@mbostock/d3-treemap
+ * - https://d3-wiki.readthedocs.io/zh_CN/master/Treemap-Layout/
+ * - http://bl.ocks.org/masakick/04ad1502068302abbbcb
+ * - https://strongriley.github.io/d3/ex/treemap.html
+ * - http://bl.ocks.org/ganeshv/6a8e9ada3ab7f2d88022
+ */
+
 const width = 800;
 const height = 532;
 
@@ -73,4 +89,28 @@ function drawChart(error, movie_sales) {
     .attr('height', d => d.y1 - d.y0)
     .attr('fill', 'white')
     .attr('stroke', 'black');
+
+  /**
+   * If we’d like labels in each rectangle we could join g elements to the array and add rect and text elements to each g:
+   */
+  const nodes = svg
+    .selectAll('g')
+    .data(root.descendants())
+    .enter()
+    .append('g')
+    .attr('transform', d => 'translate(' + [d.x0, d.y0] + ')');
+
+  nodes
+    .append('rect')
+    .attr('width', d => d.x1 - d.x0)
+    .attr('height', d => d.y1 - d.y0)
+    .attr('fill', 'none')
+    .attr('stroke', 'none');
+
+  nodes
+    .append('text')
+    .attr('dx', 4)
+    .attr('dy', 14)
+    .attr('class', 'inner-text')
+    .text(d => d.data.name);
 }
