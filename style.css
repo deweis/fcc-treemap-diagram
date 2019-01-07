@@ -12,11 +12,16 @@ h3 {
 }
 
 .container {
-  background: #e0f2f1; /* teal lighten-5 */
   display: flex;
   margin: 0 auto;
   width: 90vw;
   height: 60vw;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  background: #e0f2f1; /* teal lighten-5 */
 }
 
 @media (min-width: 888px) {
