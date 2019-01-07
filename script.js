@@ -1,3 +1,6 @@
+const width = 800;
+const height = 532;
+
 /**
  * Create and append the svg element
  */
@@ -7,7 +10,7 @@ const svg = d3
   .attr('id', 'chart')
   .attr('class', 'svg')
   // http://svg.tutorial.aptico.de/start3.php?knr=3&kname=Dokumentstruktur%20I&uknr=3.5&ukname=Das%20Attribut%20viewBox
-  .attr('viewBox', `0 0 800 532`)
+  .attr('viewBox', `0 0 ${width} ${height}`)
   .attr('preserveAspectRatio', 'xMidYMid meet');
 
 /**
@@ -29,4 +32,45 @@ function drawChart(error, movie_sales) {
     console.log(error);
   }
   console.log(movie_sales);
+
+  /**
+   * A d3.hierarchy object is a data structure that represents a hierarchy. It has a number of functions defined on it for retrieving things like ancestor, descendant and leaf nodes and for computing the path between nodes. It can be created from a nested JavaScript object.
+   * --> https://d3indepth.com/layouts/
+   */
+  const root = d3.hierarchy(movie_sales);
+
+  /**
+   * Create and configure the treemap layout
+   */
+  const treemapLayout = d3
+    .treemap()
+    .size([width, height])
+    .paddingOuter(20);
+
+  /**
+   * Before applying this layout to our hierarchy we must run .sum() on the hierarchy. This traverses the tree and sets .value on each node to the sum of its children. Note that we pass an accessor function into .sum() to specify which property to sum.
+   */
+  root.sum(d => d.value);
+
+  /**
+   * We can now call treemapLayout, passing in our hierarchy object:
+   */
+  treemapLayout(root);
+
+  /**
+   * The layout adds 4 properties x0, x1, y0 and y1 to each node which specify the dimensions of each rectangle in the treemap.
+   * Now we can join our nodes to rect elements and update the x, y, width and height properties of each rect:
+   */
+  svg
+    .append('g')
+    .selectAll('rect')
+    .data(root.descendants())
+    .enter()
+    .append('rect')
+    .attr('x', d => d.x0)
+    .attr('y', d => d.y0)
+    .attr('width', d => d.x1 - d.x0)
+    .attr('height', d => d.y1 - d.y0)
+    .attr('fill', 'white')
+    .attr('stroke', 'black');
 }
