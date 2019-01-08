@@ -58,10 +58,7 @@ function drawChart(error, movie_sales) {
   /**
    * Create and configure the treemap layout
    */
-  const treemapLayout = d3
-    .treemap()
-    .size([width, height])
-    .paddingOuter(20);
+  const treemapLayout = d3.treemap().size([width, height]);
 
   /**
    * Before applying this layout to our hierarchy we must run .sum() on the hierarchy. This traverses the tree and sets .value on each node to the sum of its children. Note that we pass an accessor function into .sum() to specify which property to sum.
@@ -83,6 +80,7 @@ function drawChart(error, movie_sales) {
     .data(root.descendants())
     .enter()
     .append('rect')
+    .attr('class', 'tile')
     .attr('x', d => d.x0)
     .attr('y', d => d.y0)
     .attr('width', d => d.x1 - d.x0)
