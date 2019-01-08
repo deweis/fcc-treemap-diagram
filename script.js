@@ -81,12 +81,53 @@ function drawChart(error, movie_sales) {
     .enter()
     .append('rect')
     .attr('class', 'tile')
+    .attr('data-name', d => d.data.name)
+    .attr('data-category', d => d.data.category)
+    .attr('data-value', d => d.data.value)
     .attr('x', d => d.x0)
     .attr('y', d => d.y0)
     .attr('width', d => d.x1 - d.x0)
     .attr('height', d => d.y1 - d.y0)
     .attr('fill', 'white')
     .attr('stroke', 'black');
+
+  /**
+   * Add the Tooltip
+   * Thanks: http://bl.ocks.org/d3noob/a22c42db65eb00d4e369
+   */
+  const divTooltip = d3
+    .select('body')
+    .append('div')
+    .attr('class', 'tooltip')
+    .attr('id', 'tooltip')
+    .style('opacity', 0);
+
+  svg
+    .selectAll('rect')
+    .on('mouseover', d => {
+      /* Show tooltip when hovering in */
+      divTooltip
+        .transition()
+        .duration(200)
+        .style('opacity', 0.9)
+        .attr('data-value', d.data.value);
+
+      divTooltip
+        .html(
+          `
+          ${d.data.name}<br>
+          - ${d.data.category} -`
+        )
+        .style('left', d3.event.pageX + 10 + 'px')
+        .style('top', d3.event.pageY - 35 + 'px');
+    })
+    .on('mouseout', d => {
+      /* Hide tooltip when hovering out */
+      divTooltip
+        .transition()
+        .duration(500)
+        .style('opacity', 0);
+    });
 
   /**
    * If we’d like labels in each rectangle we could join g elements to the array and add rect and text elements to each g:
