@@ -3,6 +3,12 @@
  * - Text line breaks
  * - Remove Parent category from diagram (check on paddingOuter etc.)
  * - check on user stories
+ * - add colors
+ * - add legend
+ *
+ * Examples_1:
+ * - https://codepen.io/carlchil/pen/QZvwvN?editors=0010
+ * - https://codepen.io/HIC/pen/bxzpRR?editors=0010
  *
  *
  * Examples:
@@ -58,7 +64,10 @@ function drawChart(error, movie_sales) {
   /**
    * Create and configure the treemap layout
    */
-  const treemapLayout = d3.treemap().size([width, height]);
+  const treemapLayout = d3
+    .treemap()
+    .size([width, height])
+    .padding(3);
 
   /**
    * Before applying this layout to our hierarchy we must run .sum() on the hierarchy. This traverses the tree and sets .value on each node to the sum of its children. Note that we pass an accessor function into .sum() to specify which property to sum.
@@ -68,28 +77,51 @@ function drawChart(error, movie_sales) {
   /**
    * We can now call treemapLayout, passing in our hierarchy object:
    */
-  treemapLayout(root);
+  const treeData = treemapLayout(root);
 
-  /**
-   * The layout adds 4 properties x0, x1, y0 and y1 to each node which specify the dimensions of each rectangle in the treemap.
-   * Now we can join our nodes to rect elements and update the x, y, width and height properties of each rect:
-   */
-  svg
-    .append('g')
-    .selectAll('rect')
-    .data(root.descendants())
+  // https://codepen.io/carlchil/pen/QZvwvN?editors=0010
+  const categories = svg
+    .selectAll('g')
+    .data(treeData.children)
     .enter()
+    .append('g');
+
+  // https://codepen.io/carlchil/pen/QZvwvN?editors=0010
+  const items = categories
+    .selectAll('g')
+    .data(d => d.children)
+    .enter()
+    .append('g')
+    .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
+
+  items // https://codepen.io/carlchil/pen/QZvwvN?editors=0010
     .append('rect')
     .attr('class', 'tile')
-    .attr('data-name', d => d.data.name)
-    .attr('data-category', d => d.data.category)
-    .attr('data-value', d => d.data.value)
-    .attr('x', d => d.x0)
-    .attr('y', d => d.y0)
+    .attr('fill', '#a5d6a7') // green lighten-3 // .attr('fill', d => platformColors[d.data.category])
+    .attr('stroke', 'none')
     .attr('width', d => d.x1 - d.x0)
     .attr('height', d => d.y1 - d.y0)
-    .attr('fill', 'white')
-    .attr('stroke', 'black');
+    .attr('data-name', d => d.data.name)
+    .attr('data-category', d => d.data.category)
+    .attr('data-value', d => d.data.value);
+
+  items
+    .append('text')
+    .attr('dx', 4)
+    .attr('dy', 14)
+    .attr('class', 'inner-text')
+    .attr('fill', 'black')
+    .text(d => d.data.name);
+
+  /* Line break after every word: https://codepen.io/HIC/pen/bxzpRR?editors=0010 */
+  //.selectAll('tspan')
+  //.data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g))
+  //.enter()
+  //.append('tspan')
+  //.attr('class', 'inner-text')
+  //.attr('x', 4)
+  //.attr('y', (d, i) => 13 + 10 * i)
+  //.text(d => d);
 
   /**
    * Add the Tooltip
@@ -128,28 +160,4 @@ function drawChart(error, movie_sales) {
         .duration(500)
         .style('opacity', 0);
     });
-
-  /**
-   * If we’d like labels in each rectangle we could join g elements to the array and add rect and text elements to each g:
-   */
-  const nodes = svg
-    .selectAll('g')
-    .data(root.descendants())
-    .enter()
-    .append('g')
-    .attr('transform', d => 'translate(' + [d.x0, d.y0] + ')');
-
-  nodes
-    .append('rect')
-    .attr('width', d => d.x1 - d.x0)
-    .attr('height', d => d.y1 - d.y0)
-    .attr('fill', 'none')
-    .attr('stroke', 'none');
-
-  nodes
-    .append('text')
-    .attr('dx', 4)
-    .attr('dy', 14)
-    .attr('class', 'inner-text')
-    .text(d => d.data.name);
 }
