@@ -24,6 +24,7 @@ const width = 800;
 const height = 532;
 
 const colors = {
+  // Thank you:  https://codepen.io/carlchil/pen/QZvwvN?editors=0010
   Action: '#ffcc80' /* orange lighten-3 */,
   Drama: '#e6ee9c' /* lime lighten-3 */,
   Adventure: ' #81d4fa' /* light-blue lighten-3 */,
@@ -81,8 +82,10 @@ function drawChart(error, movie_sales) {
 
   /**
    * Before applying this layout to our hierarchy we must run .sum() on the hierarchy. This traverses the tree and sets .value on each node to the sum of its children. Note that we pass an accessor function into .sum() to specify which property to sum.
+   *
+   * Then sort the category sums
    */
-  root.sum(d => d.value);
+  root.sum(d => d.value).sort((a, b) => b.value - a.value);
 
   /**
    * We can now call treemapLayout, passing in our hierarchy object:
