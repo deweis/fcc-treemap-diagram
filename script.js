@@ -23,6 +23,16 @@
 const width = 800;
 const height = 532;
 
+const colors = {
+  Action: '#ffcc80' /* orange lighten-3 */,
+  Drama: '#e6ee9c' /* lime lighten-3 */,
+  Adventure: ' #81d4fa' /* light-blue lighten-3 */,
+  Family: '#ce93d8' /* purple lighten-3 */,
+  Animation: '#80deea' /* cyan lighten-3 */,
+  Comedy: '#ffab91' /* deep-orange lighten-3 */,
+  Biography: '#80cbc4' /* teal lighten-3 */
+};
+
 /**
  * Create and append the svg element
  */
@@ -101,6 +111,7 @@ function drawChart(error, movie_sales) {
     .attr('stroke', 'none')
     .attr('width', d => d.x1 - d.x0)
     .attr('height', d => d.y1 - d.y0)
+    .attr('fill', d => colors[d.data.category])
     .attr('data-name', d => d.data.name)
     .attr('data-category', d => d.data.category)
     .attr('data-value', d => d.data.value);
