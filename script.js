@@ -119,23 +119,41 @@ function drawChart(error, movie_sales) {
     .attr('data-category', d => d.data.category)
     .attr('data-value', d => d.data.value);
 
-  items
+  // Add the labels
+  items // thanks to https://codepen.io/HIC/pen/bxzpRR?editors=0010 for getting me to know about the tspans..
     .append('text')
-    .attr('dx', 4)
-    .attr('dy', 14)
     .attr('class', 'inner-text')
-    .attr('fill', 'black')
-    .text(d => d.data.name);
+    .selectAll('tspan')
+    .data(d => {
+      // split the labels according the width of the rect
+      const label = d.data.name.trim();
+      const arrWords = label.split(' ');
+      const width = Math.round((d.x1 - d.x0) / 4) + 1; // approximate calculation of pixels to letter width
+      const arrLengths = arrWords.map(x => (x = x.length + 1));
+      let tmpString = '';
+      let arrResult = [];
 
-  /* Line break after every word: https://codepen.io/HIC/pen/bxzpRR?editors=0010 */
-  //.selectAll('tspan')
-  //.data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g))
-  //.enter()
-  //.append('tspan')
-  //.attr('class', 'inner-text')
-  //.attr('x', 4)
-  //.attr('y', (d, i) => 13 + 10 * i)
-  //.text(d => d);
+      // join as many words as fit into one line of width
+      arrLengths.forEach((x, i, arr) => {
+        if (tmpString.length + x - 1 < width) {
+          tmpString = tmpString + ' ' + arrWords[i];
+        } else {
+          arrResult.push(tmpString.trim());
+          tmpString = arrWords[i];
+        }
+        if (i === arr.length - 1) {
+          arrResult.push(tmpString);
+        }
+      });
+
+      return arrResult;
+    })
+    .enter()
+    .append('tspan')
+    .attr('class', 'inner-text')
+    .attr('x', 4)
+    .attr('y', (d, i) => 13 + 11 * i)
+    .text(d => d);
 
   /**
    * Add the Tooltip
