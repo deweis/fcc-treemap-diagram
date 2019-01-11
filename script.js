@@ -128,23 +128,52 @@ function drawChart(error, movie_sales) {
       // split the labels according the width of the rect
       const label = d.data.name.trim();
       const arrWords = label.split(' ');
-      const width = Math.round((d.x1 - d.x0) / 4) + 1; // approximate calculation of pixels to letter width
-      const arrLengths = arrWords.map(x => (x = x.length + 1));
+      let arrWordsNew = [];
+
+      // Split Words that include a '-'
+      for (let i = 0; i < arrWords.length; i++) {
+        if (arrWords[i].includes('-')) {
+          const tmpStr = arrWords[i].split('-');
+          arrWordsNew.push(tmpStr[0] + '-');
+          arrWordsNew.push(tmpStr[1]);
+        } else {
+          arrWordsNew.push(arrWords[i]);
+        }
+      }
+
+      const width = Math.round((d.x1 - d.x0) / 4) - 2; // approximate calculation of pixels to letter width
+      let arrWordsTmp = [];
+
+      // Split Words greater than width
+      for (let i = 0; i < arrWordsNew.length; i++) {
+        if (arrWordsNew[i].length > width) {
+          arrWordsTmp.push(arrWordsNew[i].substr(0, 8));
+          arrWordsTmp.push(arrWordsNew[i].substring(8));
+        } else {
+          arrWordsTmp.push(arrWordsNew[i]);
+        }
+      }
+      arrWordsNew = arrWordsTmp;
+
+      const arrLengths = arrWordsNew.map(x => (x = x.length + 1));
       let tmpString = '';
       let arrResult = [];
 
       // join as many words as fit into one line of width
       arrLengths.forEach((x, i, arr) => {
         if (tmpString.length + x - 1 < width) {
-          tmpString = tmpString + ' ' + arrWords[i];
+          tmpString = tmpString + ' ' + arrWordsNew[i];
         } else {
           arrResult.push(tmpString.trim());
-          tmpString = arrWords[i];
+          tmpString = arrWordsNew[i];
         }
+
         if (i === arr.length - 1) {
           arrResult.push(tmpString);
         }
       });
+      arrResult = arrResult.filter(x => x.length >= 1);
+      arrResult = arrResult.map(x => (x = x.trim()));
 
       return arrResult;
     })
@@ -152,7 +181,7 @@ function drawChart(error, movie_sales) {
     .append('tspan')
     .attr('class', 'inner-text')
     .attr('x', 4)
-    .attr('y', (d, i) => 13 + 11 * i)
+    .attr('y', (d, i) => 11 + 10 * i)
     .text(d => d);
 
   /**
