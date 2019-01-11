@@ -15,7 +15,7 @@ h3 {
   display: flex;
   margin: 0 auto;
   width: 90vw;
-  height: 60vw;
+  height: 51.4vw;
 }
 
 .svg {
@@ -39,9 +39,14 @@ h3 {
   pointer-events: none;
 }
 
-@media (min-width: 888px) {
+@media (min-width: 1100px) {
   .container {
-    width: 800px;
-    height: 532px;
+    width: 1000px;
+    height: 570px;
   }
 }
+
+/*
+1. Change media query
+2. Change script width/height
+3. Change .container width/height*/

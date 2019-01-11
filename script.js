@@ -20,8 +20,8 @@
  * - http://bl.ocks.org/ganeshv/6a8e9ada3ab7f2d88022
  */
 
-const width = 800;
-const height = 532;
+const width = 1000;
+const height = 570;
 
 const colors = {
   // Thank you:  https://codepen.io/carlchil/pen/QZvwvN?editors=0010
