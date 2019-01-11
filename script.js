@@ -125,7 +125,9 @@ function drawChart(error, movie_sales) {
     .attr('class', 'inner-text')
     .selectAll('tspan')
     .data(d => {
-      // split the labels according the width of the rect
+      /**
+       * split the labels according the width of the rect
+       **/
       const label = d.data.name.trim();
       const arrWords = label.split(' ');
       let arrWordsNew = [];
@@ -141,14 +143,14 @@ function drawChart(error, movie_sales) {
         }
       }
 
-      const width = Math.round((d.x1 - d.x0) / 4) - 2; // approximate calculation of pixels to letter width
+      const width = Math.round((d.x1 - d.x0) / 6) + 1; // approximate calculation of pixels to letter width
       let arrWordsTmp = [];
 
       // Split Words greater than width
       for (let i = 0; i < arrWordsNew.length; i++) {
         if (arrWordsNew[i].length > width) {
-          arrWordsTmp.push(arrWordsNew[i].substr(0, 8));
-          arrWordsTmp.push(arrWordsNew[i].substring(8));
+          arrWordsTmp.push(arrWordsNew[i].substr(0, width - 1));
+          arrWordsTmp.push(arrWordsNew[i].substring(width - 1));
         } else {
           arrWordsTmp.push(arrWordsNew[i]);
         }
@@ -181,7 +183,7 @@ function drawChart(error, movie_sales) {
     .append('tspan')
     .attr('class', 'inner-text')
     .attr('x', 4)
-    .attr('y', (d, i) => 11 + 10 * i)
+    .attr('y', (d, i) => 12 + 11 * i)
     .text(d => d);
 
   /**
