@@ -1,9 +1,6 @@
 /**
  * TBD:
- * - Text line breaks
- * - Remove Parent category from diagram (check on paddingOuter etc.)
- * - check on user stories
- * - add colors
+ * - add colors dynamically
  * - add legend
  *
  * Examples_1:
@@ -107,14 +104,21 @@ function drawChart(error, movie_sales) {
     .append('g')
     .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
 
+  // https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
+  const colorScale = d3.scaleOrdinal(d3['schemeCategory20']);
+  console.log(d3['schemeCategory20']);
+
   items // https://codepen.io/carlchil/pen/QZvwvN?editors=0010
     .append('rect')
     .attr('class', 'tile')
-    .attr('fill', '#a5d6a7') // green lighten-3 // .attr('fill', d => platformColors[d.data.category])
+    //.attr('fill', '#a5d6a7') // green lighten-3 // .attr('fill', d => platformColors[d.data.category])
     .attr('stroke', 'none')
     .attr('width', d => d.x1 - d.x0)
     .attr('height', d => d.y1 - d.y0)
-    .attr('fill', d => colors[d.data.category])
+    //.attr('fill', d => colors[d.data.category])
+    .attr('fill', function(d, i) {
+      return colorScale(d.data.category);
+    })
     .attr('data-name', d => d.data.name)
     .attr('data-category', d => d.data.category)
     .attr('data-value', d => d.data.value);
@@ -184,6 +188,11 @@ function drawChart(error, movie_sales) {
     .attr('class', 'inner-text')
     .attr('x', 4)
     .attr('y', (d, i) => 12 + 11 * i)
+    .attr('fill', d => {
+      //console.log(d3.select(this.parentNode.parentNode));
+
+      return 'black';
+    })
     .text(d => d);
 
   /**
