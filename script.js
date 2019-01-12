@@ -20,16 +20,20 @@
 const width = 1000;
 const height = 570;
 
-const colors = {
-  // Thank you:  https://codepen.io/carlchil/pen/QZvwvN?editors=0010
-  Action: '#ffcc80' /* orange lighten-3 */,
-  Drama: '#e6ee9c' /* lime lighten-3 */,
-  Adventure: ' #81d4fa' /* light-blue lighten-3 */,
-  Family: '#ce93d8' /* purple lighten-3 */,
-  Animation: '#80deea' /* cyan lighten-3 */,
-  Comedy: '#ffab91' /* deep-orange lighten-3 */,
-  Biography: '#80cbc4' /* teal lighten-3 */
-};
+/**
+ * Define the color scale
+ */
+const colors = [
+  '#ffcc80' /* orange lighten-3 */,
+  '#e6ee9c' /* lime lighten-3 */,
+  '#81d4fa' /* light-blue lighten-3 */,
+  '#ce93d8' /* purple lighten-3 */,
+  '#80deea' /* cyan lighten-3 */,
+  '#ffab91' /* deep-orange lighten-3 */,
+  '#80cbc4' /* teal lighten-3 */
+];
+
+const colorScale = d3.scaleOrdinal(colors);
 
 /**
  * Create and append the svg element
@@ -103,10 +107,6 @@ function drawChart(error, movie_sales) {
     .enter()
     .append('g')
     .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
-
-  // https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
-  const colorScale = d3.scaleOrdinal(d3['schemeCategory20']);
-  console.log(d3['schemeCategory20']);
 
   items // https://codepen.io/carlchil/pen/QZvwvN?editors=0010
     .append('rect')
@@ -188,11 +188,6 @@ function drawChart(error, movie_sales) {
     .attr('class', 'inner-text')
     .attr('x', 4)
     .attr('y', (d, i) => 12 + 11 * i)
-    .attr('fill', d => {
-      //console.log(d3.select(this.parentNode.parentNode));
-
-      return 'black';
-    })
     .text(d => d);
 
   /**
