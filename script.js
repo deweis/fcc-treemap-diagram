@@ -1,7 +1,9 @@
 /**
  * TBD:
- * - add colors dynamically
- * - add legend
+ * - finetune legend code
+ * - finetune size
+ * - finetune text wrapper
+ * - finetune overall code
  *
  * Examples_1:
  * - https://codepen.io/carlchil/pen/QZvwvN?editors=0010
@@ -44,7 +46,7 @@ const svg = d3
   .attr('id', 'chart')
   .attr('class', 'svg')
   // http://svg.tutorial.aptico.de/start3.php?knr=3&kname=Dokumentstruktur%20I&uknr=3.5&ukname=Das%20Attribut%20viewBox
-  .attr('viewBox', `0 0 ${width} ${height}`)
+  .attr('viewBox', `0 53 ${width} ${height}`)
   .attr('preserveAspectRatio', 'xMidYMid meet');
 
 /**
@@ -227,4 +229,53 @@ function drawChart(error, movie_sales) {
         .duration(500)
         .style('opacity', 0);
     });
+
+  /**
+   * Add the Legend
+   * Thank you: https://codepen.io/carlchil/pen/QZvwvN?editors=0010
+   */
+  const catNameLengths = treeData.children.map(x => x.data.name.length);
+  const legendEntryWidth = Math.max(...catNameLengths) * 10;
+  const legendBoxSize = 20;
+  const legendPadding = 5;
+  const legendMargin = 15;
+
+  const legendRows = Math.ceil(treeData.children.length / 8);
+  //const legendWidth = (legendEntryWidth + legendBoxSize) * 3;
+  //const legendWidth = (legendEntryWidth + legendBoxSize) * 8;
+  //const legendHeight = legendRows * (legendBoxSize + legendPadding);
+
+  const legend = svg
+    .append('g')
+    .attr('id', 'legend')
+    .attr('transform', `translate(180, ${height + legendMargin})`);
+
+  const legendEntries = legend
+    .selectAll('g')
+    .data(treeData.children)
+    .enter()
+    .append('g')
+    .attr('transform', (d, i) => {
+      return (
+        'translate(' +
+        legendEntryWidth * Math.floor(i / legendRows) +
+        ', ' +
+        (legendBoxSize + legendPadding) * (i % legendRows) +
+        ')'
+      );
+    });
+
+  legendEntries
+    .append('rect')
+    .attr('class', 'legend-item')
+    .attr('width', legendBoxSize)
+    .attr('height', legendBoxSize)
+    .attr('fill', d => colorScale(d.data.name));
+
+  legendEntries
+    .append('text')
+    .attr('class', 'legend-text')
+    .attr('x', legendBoxSize + legendPadding)
+    .attr('y', 16)
+    .html(d => d.data.name);
 }
