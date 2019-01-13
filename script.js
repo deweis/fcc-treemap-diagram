@@ -54,9 +54,17 @@ const svg = d3
  * Async load the movies data
  */
 d3.queue()
+  // .defer(
+  //   d3.json, // movies
+  //   'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/movie-data.json'
+  // )
+  // .defer(
+  //   d3.json, // videogames
+  //   'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/video-game-sales-data.json'
+  // )
   .defer(
-    d3.json,
-    'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/movie-data.json'
+    d3.json, // kickstarter-funding-data
+    'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/kickstarter-funding-data.json'
   )
   .await(drawChart);
 
@@ -149,16 +157,17 @@ function drawChart(error, movie_sales) {
           arrWordsNew.push(arrWords[i]);
         }
       }
-      console.log(arrWordsNew);
 
-      const width = Math.round((d.x1 - d.x0) / 6); // approximate calculation of pixels to letter width
+      const itemWidth = Math.round((d.x1 - d.x0) / 6); // approximate calculation of pixels to letter width
+      const itemHeight = Math.round((d.y1 - d.y0) / 11); // approximate calculation of pixels to letter height
+
       let arrWordsTmp = [];
 
       // Split Words greater than width
       for (let i = 0; i < arrWordsNew.length; i++) {
-        if (arrWordsNew[i].length > width) {
-          arrWordsTmp.push(arrWordsNew[i].substr(0, width - 1));
-          arrWordsTmp.push(arrWordsNew[i].substring(width - 1));
+        if (arrWordsNew[i].length > itemWidth) {
+          arrWordsTmp.push(arrWordsNew[i].substr(0, itemWidth - 1));
+          arrWordsTmp.push(arrWordsNew[i].substring(itemWidth - 1));
         } else {
           arrWordsTmp.push(arrWordsNew[i]);
         }
@@ -169,9 +178,9 @@ function drawChart(error, movie_sales) {
       let tmpString = '';
       let arrResult = [];
 
-      // join as many words as fit into one line of width
+      // join as many words as fit into one line of itemWidth
       arrLengths.forEach((x, i, arr) => {
-        if (tmpString.length + x - 1 < width) {
+        if (tmpString.length + x - 1 < itemWidth) {
           tmpString = tmpString + ' ' + arrWordsNew[i];
         } else {
           arrResult.push(tmpString.trim());
@@ -182,8 +191,15 @@ function drawChart(error, movie_sales) {
           arrResult.push(tmpString);
         }
       });
+
       arrResult = arrResult.filter(x => x.length >= 1);
       arrResult = arrResult.map(x => (x = x.trim()));
+
+      if (arrResult.length > itemHeight) {
+        const items = itemHeight <= 2 ? 1 : 2;
+        const itemsToRemove = arrResult.length - itemHeight + items;
+        arrResult.splice(itemHeight - items, itemsToRemove, '***');
+      }
 
       return arrResult;
     })
