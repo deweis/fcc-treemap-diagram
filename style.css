@@ -43,10 +43,10 @@ h3 {
   font-size: 0.8em;
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 960px) {
   .container {
-    width: 990px;
-    height: 660px;
+    width: 864px;
+    height: 576px;
   }
 }
 

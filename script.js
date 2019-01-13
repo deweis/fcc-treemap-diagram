@@ -19,11 +19,12 @@
  * - http://bl.ocks.org/ganeshv/6a8e9ada3ab7f2d88022
  */
 
-const width = 1000;
+const width = 1040;
 const height = 570;
 
 /**
  * Define the color scale
+ * https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
  */
 const colors = [
   '#ffcc80' /* orange lighten-3 */,
@@ -148,8 +149,9 @@ function drawChart(error, movie_sales) {
           arrWordsNew.push(arrWords[i]);
         }
       }
+      console.log(arrWordsNew);
 
-      const width = Math.round((d.x1 - d.x0) / 6) + 1; // approximate calculation of pixels to letter width
+      const width = Math.round((d.x1 - d.x0) / 6); // approximate calculation of pixels to letter width
       let arrWordsTmp = [];
 
       // Split Words greater than width
