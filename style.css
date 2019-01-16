@@ -21,7 +21,6 @@ h3 {
 .svg {
   width: 100%;
   height: auto;
-  /*background: #e0f2f1;  teal lighten-5 */
 }
 
 .inner-text {
@@ -49,8 +48,3 @@ h3 {
     height: 576px;
   }
 }
-
-/*
-1. Change media query
-2. Change script width/height
-3. Change .container width/height*/

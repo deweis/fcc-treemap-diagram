@@ -1,24 +1,3 @@
-/**
- * TBD:
- * - finetune legend code
- * - finetune size
- * - finetune text wrapper
- * - finetune overall code
- *
- * Examples_1:
- * - https://codepen.io/carlchil/pen/QZvwvN?editors=0010
- * - https://codepen.io/HIC/pen/bxzpRR?editors=0010
- *
- *
- * Examples:
- * - https://d3indepth.com/layouts/
- * - https://beta.observablehq.com/@mbostock/d3-treemap
- * - https://d3-wiki.readthedocs.io/zh_CN/master/Treemap-Layout/
- * - http://bl.ocks.org/masakick/04ad1502068302abbbcb
- * - https://strongriley.github.io/d3/ex/treemap.html
- * - http://bl.ocks.org/ganeshv/6a8e9ada3ab7f2d88022
- */
-
 const width = 1040;
 const height = 570;
 
@@ -54,18 +33,18 @@ const svg = d3
  * Async load the movies data
  */
 d3.queue()
-  // .defer(
-  //   d3.json, // movies
-  //   'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/movie-data.json'
-  // )
+  .defer(
+    d3.json, // movies
+    'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/movie-data.json'
+  )
   // .defer(
   //   d3.json, // videogames
   //   'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/video-game-sales-data.json'
   // )
-  .defer(
-    d3.json, // kickstarter-funding-data
-    'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/kickstarter-funding-data.json'
-  )
+  // .defer(
+  //   d3.json, // kickstarter-funding-data
+  //   'https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/kickstarter-funding-data.json'
+  // )
   .await(drawChart);
 
 /**
@@ -76,7 +55,6 @@ function drawChart(error, movie_sales) {
   if (error) {
     console.log(error);
   }
-  console.log(movie_sales);
 
   /**
    * A d3.hierarchy object is a data structure that represents a hierarchy. It has a number of functions defined on it for retrieving things like ancestor, descendant and leaf nodes and for computing the path between nodes. It can be created from a nested JavaScript object.
@@ -122,11 +100,9 @@ function drawChart(error, movie_sales) {
   items // https://codepen.io/carlchil/pen/QZvwvN?editors=0010
     .append('rect')
     .attr('class', 'tile')
-    //.attr('fill', '#a5d6a7') // green lighten-3 // .attr('fill', d => platformColors[d.data.category])
     .attr('stroke', 'none')
     .attr('width', d => d.x1 - d.x0)
     .attr('height', d => d.y1 - d.y0)
-    //.attr('fill', d => colors[d.data.category])
     .attr('fill', function(d, i) {
       return colorScale(d.data.category);
     })
@@ -252,36 +228,39 @@ function drawChart(error, movie_sales) {
    * Add the Legend
    * Thank you: https://codepen.io/carlchil/pen/QZvwvN?editors=0010
    */
+  const containerWidth = document.getElementById('chartContainer').clientWidth;
   const catNameLengths = treeData.children.map(x => x.data.name.length);
-  const legendEntryWidth = Math.max(...catNameLengths) * 10;
   const legendBoxSize = 20;
-  const legendPadding = 5;
-  const legendMargin = 15;
-
-  const legendRows = Math.ceil(treeData.children.length / 8);
-  //const legendWidth = (legendEntryWidth + legendBoxSize) * 3;
-  //const legendWidth = (legendEntryWidth + legendBoxSize) * 8;
-  //const legendHeight = legendRows * (legendBoxSize + legendPadding);
+  const legendEntryPadding = 3;
+  const legendEntryWidth =
+    Math.max(...catNameLengths) * 8 + legendBoxSize + legendEntryPadding;
+  const itemsPerRow = Math.floor(containerWidth / legendEntryWidth);
+  const legendRows = Math.ceil(catNameLengths.length / itemsPerRow);
+  const legendTopMargin = 10;
+  const legendLeftPadding = 15;
 
   const legend = svg
     .append('g')
     .attr('id', 'legend')
-    .attr('transform', `translate(180, ${height + legendMargin})`);
+    .attr('class', 'legend')
+    .attr(
+      'transform',
+      `translate(${legendLeftPadding}, ${height + legendTopMargin})`
+    );
 
   const legendEntries = legend
     .selectAll('g')
     .data(treeData.children)
     .enter()
     .append('g')
-    .attr('transform', (d, i) => {
-      return (
-        'translate(' +
-        legendEntryWidth * Math.floor(i / legendRows) +
-        ', ' +
-        (legendBoxSize + legendPadding) * (i % legendRows) +
-        ')'
-      );
-    });
+    .attr('width', legendEntryWidth)
+    .attr(
+      'transform',
+      (d, i) =>
+        `translate(${legendEntryWidth *
+          Math.floor(i / legendRows)}, ${(legendBoxSize + legendEntryPadding) *
+          (i % legendRows)})`
+    );
 
   legendEntries
     .append('rect')
@@ -293,7 +272,7 @@ function drawChart(error, movie_sales) {
   legendEntries
     .append('text')
     .attr('class', 'legend-text')
-    .attr('x', legendBoxSize + legendPadding)
-    .attr('y', 16)
+    .attr('x', legendBoxSize + legendEntryPadding)
+    .attr('y', 15)
     .html(d => d.data.name);
 }
